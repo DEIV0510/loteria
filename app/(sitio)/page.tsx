@@ -1,11 +1,14 @@
 import Link from 'next/link';
+import { Buscador } from '@/components/Buscador';
+import { Cinta } from '@/components/Cinta';
 import { Cuenta } from '@/components/Cuenta';
 import { EnVivo } from '@/components/EnVivo';
 import { Espacio } from '@/components/Espacio';
-import { Tarjeta } from '@/components/Tarjeta';
-import { Buscador } from '@/components/Buscador';
+import { Numero } from '@/components/Numero';
+import { Reloj } from '@/components/Reloj';
+import { Detalles, Tarjeta } from '@/components/Tarjeta';
 import { leerEspacios } from '@/lib/espacios';
-import { fechaLarga, hora12 } from '@/lib/fechas';
+import { fechaCorta, fechaLarga, hora12 } from '@/lib/fechas';
 import { marcaDeCambio } from '@/lib/resultados';
 import { portada, type ItemHoy } from '@/lib/vista';
 
@@ -32,31 +35,78 @@ export default async function Inicio() {
   const ahora = Date.now();
   const [p, espacios, marca] = await Promise.all([portada(ahora), leerEspacios(), marcaDeCambio()]);
   const proximo = p.pendientes[0];
-  const primeros = p.listos.slice(0, VISIBLES);
-  const resto = p.listos.slice(VISIBLES);
+  // El último que salió va grande arriba; el resto, en la rejilla.
+  const ultimo = p.listos[0] ?? null;
+  const loteriaReciente = p.loterias[0] ?? null;
+  const primeros = p.listos.slice(1, VISIBLES + 1);
+  const resto = p.listos.slice(VISIBLES + 1);
   // "Nuevo" = el sorteo se jugó hace menos de 30 minutos.
   const esNuevo = (ms: number | null) => ms !== null && ahora - ms < NUEVO_MS;
 
   return (
     <>
-      <div className="contenedor">
-        <section className="portada-cabeza">
-          <h1>Resultados de hoy</h1>
-          <p className="fecha-hoy">{fechaLarga(p.hoy)}</p>
-          <div className="estado-vivo">
-            <EnVivo marca={marca} revisado={new Date(ahora).toISOString()} />
-            <span className="num">
-              {p.listos.length} de {p.total} sorteos con resultado
-            </span>
+      <section className="hero">
+        <div className="contenedor hero-grid">
+          <div className="hero-texto">
+            <p className="hero-fecha">{fechaLarga(p.hoy)}</p>
+            <h1>Resultados de hoy</h1>
+            <div className="hero-vivo">
+              <span className="en-vivo">
+                <span className="punto latiendo" aria-hidden="true" />
+                En vivo
+              </span>
+              <span className="num">
+                {p.listos.length} de {p.total} sorteos ya salieron
+              </span>
+            </div>
+            <div className="hero-vivo" style={{ fontSize: '0.84rem' }}>
+              <EnVivo marca={marca} revisado={new Date(ahora).toISOString()} sinPunto />
+            </div>
           </div>
-          {proximo && proximo.ms && (
-            <p className="proximo">
-              Próximo: <strong>{proximo.juego.nombre}</strong> · {hora12(proximo.hora!)} ·{' '}
-              <Cuenta ms={proximo.ms} inicial={ahora} />
-            </p>
+
+          {ultimo ? (
+            <Link href={`/${ultimo.juego.slug}`} className="destacado">
+              <span className="destacado-rotulo">
+                <span>{esNuevo(ultimo.ms) ? 'Acaba de salir' : 'Último resultado'}</span>
+                {ultimo.hora && <span className="num">{hora12(ultimo.hora)}</span>}
+              </span>
+              <span className="destacado-nombre">{ultimo.juego.nombre}</span>
+              <Numero r={ultimo.resultado!} tam="grande" cae />
+              <span className="destacado-pie">
+                <Detalles r={ultimo.resultado!} />
+                <span className="ver">Ver historial →</span>
+              </span>
+            </Link>
+          ) : (
+            loteriaReciente && (
+              <Link href={`/${loteriaReciente.juego.slug}`} className="destacado">
+                <span className="destacado-rotulo">
+                  <span>Última lotería</span>
+                  <span>{fechaCorta(loteriaReciente.resultado!.fecha)}</span>
+                </span>
+                <span className="destacado-nombre">{loteriaReciente.juego.nombre}</span>
+                <Numero r={loteriaReciente.resultado!} tam="grande" cae />
+                <span className="destacado-pie">
+                  <Detalles r={loteriaReciente.resultado!} />
+                  <span className="ver">Ver historial →</span>
+                </span>
+              </Link>
+            )
           )}
-        </section>
-      </div>
+
+          {proximo && proximo.ms && (
+            <div className="proximo-caja">
+              <span className="rotulo">Próximo sorteo</span>
+              <span className="quien">
+                {proximo.juego.nombre} <span>· {hora12(proximo.hora!)}</span>
+              </span>
+              <Reloj ms={proximo.ms} inicial={ahora} />
+            </div>
+          )}
+        </div>
+      </section>
+
+      <Cinta items={p.listos} />
 
       <Espacio e={espacios.get('debajo')} />
 
@@ -68,6 +118,8 @@ export default async function Inicio() {
           </div>
           {p.listos.length === 0 ? (
             <p className="vacio">Todavía no hay resultados hoy. El primer sorteo es a las 10:00 a. m.</p>
+          ) : primeros.length === 0 ? (
+            <p className="vacio">Por ahora solo salió {ultimo!.juego.nombre}. Los demás aparecen aquí apenas se jueguen.</p>
           ) : (
             <>
               <div className="rejilla">
@@ -77,7 +129,7 @@ export default async function Inicio() {
               </div>
               {resto.length > 0 && (
                 <details className="mas">
-                  <summary>Ver los {p.listos.length} resultados de hoy</summary>
+                  <summary>Ver los otros {resto.length} resultados de hoy</summary>
                   <div className="rejilla">
                     {resto.map((i) => (
                       <Tarjeta key={i.juego.slug} juego={i.juego} r={i.resultado!} hora={i.hora} />

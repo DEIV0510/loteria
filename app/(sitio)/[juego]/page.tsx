@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { Banda } from '@/components/Banda';
 import { Cuenta } from '@/components/Cuenta';
 import { EnVivo } from '@/components/EnVivo';
 import { Espacio } from '@/components/Espacio';
@@ -51,25 +52,14 @@ export default async function PaginaJuego({ params }: Props) {
 
   return (
     <>
-      <div className="contenedor">
-        <nav className="migas" aria-label="Ruta">
-          <Link href="/">Inicio</Link>
-          {seccion && (
-            <>
-              {' / '}
-              <Link href={seccion[1]}>{seccion[0]}</Link>
-            </>
-          )}
-          {' / '}
-          <span>{j.nombre}</span>
-        </nav>
-        <header className="juego-cabeza">
-          <h1>{j.nombre}</h1>
-          {ultimo && <p className="sub">Resultado del {fechaLarga(ultimo.fecha)}</p>}
-        </header>
-
+      <Banda
+        titulo={j.nombre}
+        sub={ultimo ? `Resultado del ${fechaLarga(ultimo.fecha)}` : undefined}
+        migas={[{ href: '/', texto: 'Inicio' }, ...(seccion ? [{ href: seccion[1], texto: seccion[0] }] : []), { texto: j.nombre }]}
+      />
+      <div className="contenedor solapa">
         {falta && (
-          <p className="aviso-espera" style={{ marginTop: 16 }}>
+          <p className="aviso-espera">
             El sorteo del {turno.fecha === hoy ? 'día de hoy' : fechaLarga(turno.fecha)} ({hora12(turno.hora)}) todavía no
             se publica. Esta página se actualiza sola apenas salga.
           </p>
@@ -78,9 +68,7 @@ export default async function PaginaJuego({ params }: Props) {
         {ultimo ? (
           <ResultadoGrande juego={j} r={ultimo} />
         ) : (
-          <p className="vacio" style={{ marginTop: 18 }}>
-            Aún no tenemos resultados de este sorteo.
-          </p>
+          <p className="vacio">Aún no tenemos resultados de este sorteo.</p>
         )}
 
         <div className="ficha">

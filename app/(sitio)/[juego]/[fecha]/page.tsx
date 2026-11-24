@@ -5,7 +5,8 @@ import { Espacio } from '@/components/Espacio';
 import { ResultadoGrande } from '@/components/ResultadoGrande';
 import { Secos } from '@/components/Secos';
 import { leerEspacios } from '@/lib/espacios';
-import { fechaLarga, fechaSlug, slugAFecha } from '@/lib/fechas';
+import { Banda } from '@/components/Banda';
+import { fechaCorta, fechaLarga, fechaSlug, slugAFecha } from '@/lib/fechas';
 import { juego as buscarJuego } from '@/lib/juegos';
 import { filas } from '@/lib/db';
 import { resultado } from '@/lib/resultados';
@@ -48,14 +49,12 @@ export default async function PaginaFecha({ params }: Props) {
 
   return (
     <>
-      <div className="contenedor">
-        <nav className="migas" aria-label="Ruta">
-          <Link href="/">Inicio</Link> / <Link href={`/${j.slug}`}>{j.nombre}</Link> / <span>{fechaLarga(fecha)}</span>
-        </nav>
-        <header className="juego-cabeza">
-          <h1>{j.nombre}</h1>
-          <p className="sub">Resultado del {fechaLarga(fecha)}</p>
-        </header>
+      <Banda
+        titulo={j.nombre}
+        sub={`Resultado del ${fechaLarga(fecha)}`}
+        migas={[{ href: '/', texto: 'Inicio' }, { href: `/${j.slug}`, texto: j.nombre }, { texto: fechaCorta(fecha) }]}
+      />
+      <div className="contenedor solapa">
         <ResultadoGrande juego={j} r={r} />
         <nav className="pasos" aria-label="Otras fechas">
           {v.antes ? <Link href={`/${j.slug}/${fechaSlug(v.antes)}`}>← {fechaLarga(v.antes)}</Link> : <span />}

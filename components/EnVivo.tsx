@@ -13,7 +13,7 @@ function hora(iso: string) {
  * Pregunta al servidor cada 40 s si hay resultados nuevos y, si los hay, refresca la página
  * sin recargarla. Esa misma consulta despierta al robot cuando toca revisar las fuentes.
  */
-export function EnVivo({ marca, revisado }: { marca: string; revisado: string }) {
+export function EnVivo({ marca, revisado, sinPunto }: { marca: string; revisado: string; sinPunto?: boolean }) {
   const router = useRouter();
   const ultima = useRef(marca);
   const [visto, setVisto] = useState(revisado);
@@ -61,7 +61,7 @@ export function EnVivo({ marca, revisado }: { marca: string; revisado: string })
 
   return (
     <span>
-      <span className="punto latiendo" aria-hidden="true" />
+      {!sinPunto && <span className="punto latiendo" aria-hidden="true" />}
       Se actualiza solo{visto ? <> · revisado <span suppressHydrationWarning>{hora(visto)}</span></> : null}
     </span>
   );

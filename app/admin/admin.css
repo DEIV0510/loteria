@@ -3,8 +3,8 @@
   position: sticky;
   top: 0;
   z-index: 20;
-  background: var(--ink);
-  color: var(--bg);
+  background: var(--verde-osc);
+  color: #fff;
 }
 
 .panel-barra .contenedor {
@@ -26,8 +26,8 @@
 
 .panel-barra button {
   background: transparent;
-  border: 1px solid color-mix(in srgb, var(--bg) 40%, transparent);
-  color: var(--bg);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #fff;
   padding: 7px 12px;
   font-size: 0.85rem;
   cursor: pointer;
@@ -54,8 +54,8 @@
 }
 
 .panel-pestanas a[aria-current='page'] {
-  color: var(--ink);
-  border-bottom-color: var(--ink);
+  color: var(--verde-osc);
+  border-bottom-color: var(--verde);
 }
 
 .panel {

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Banda } from '@/components/Banda';
 import { leerAjustes } from '@/lib/ajustes';
 
 export const revalidate = 3600;
@@ -11,10 +12,9 @@ export const metadata: Metadata = {
 export default async function Privacidad() {
   const a = await leerAjustes();
   return (
-    <div className="contenedor">
-      <header className="juego-cabeza" style={{ paddingTop: 26, marginBottom: 20 }}>
-        <h1>Política de privacidad</h1>
-      </header>
+    <>
+    <Banda titulo="Política de privacidad" corta />
+    <div className="contenedor" style={{ marginTop: 24 }}>
       <div className="texto">
         <p>
           {a.nombre} publica resultados de loterías y chances de Colombia con fines informativos. No pedimos registro
@@ -53,5 +53,6 @@ export default async function Privacidad() {
         )}
       </div>
     </div>
+    </>
   );
 }

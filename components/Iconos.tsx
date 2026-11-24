@@ -1,10 +1,18 @@
+/** Marca: una bola verde con brillo. */
 export function Marca({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 32 32" aria-hidden="true">
-      <rect x="0" y="0" width="14" height="14" fill="currentColor" />
-      <rect x="18" y="0" width="14" height="14" fill="currentColor" />
-      <rect x="0" y="18" width="14" height="14" fill="currentColor" />
-      <rect x="18" y="18" width="14" height="14" fill="var(--accent)" />
+    <svg className={className} viewBox="0 0 40 40" aria-hidden="true">
+      <defs>
+        <radialGradient id="marca-bola" cx="0.34" cy="0.28" r="0.75">
+          <stop offset="0" stopColor="#6ee7a2" />
+          <stop offset="0.3" stopColor="#19b35c" />
+          <stop offset="0.65" stopColor="#0a8a45" />
+          <stop offset="1" stopColor="#05532a" />
+        </radialGradient>
+      </defs>
+      <circle cx="20" cy="20" r="19" fill="url(#marca-bola)" />
+      <circle cx="20" cy="21" r="9.5" fill="#fff" />
+      <path d="M16.2 17.2h7.6l-4.4 9.4" fill="none" stroke="#05532a" strokeWidth="2.6" strokeLinecap="square" />
     </svg>
   );
 }

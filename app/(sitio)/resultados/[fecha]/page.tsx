@@ -3,7 +3,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Tarjeta } from '@/components/Tarjeta';
 import { turnosDelDia } from '@/lib/agenda';
-import { fechaLarga, fechaSlug, hoyISO, slugAFecha, sumarDias } from '@/lib/fechas';
+import { Banda } from '@/components/Banda';
+import { fechaCorta, fechaLarga, fechaSlug, hoyISO, mayus, slugAFecha, sumarDias } from '@/lib/fechas';
 import { JUEGOS } from '@/lib/juegos';
 import { resultadosDelDia } from '@/lib/resultados';
 
@@ -53,15 +54,14 @@ export default async function ResultadosDelDia({ params }: Props) {
   const despues = sumarDias(fecha, 1);
 
   return (
-    <div className="contenedor">
-      <header className="juego-cabeza" style={{ paddingTop: 26 }}>
-        <h1>Resultados del {fechaLarga(fecha)}</h1>
-        <p className="sub num">{res.length} sorteos con resultado</p>
-      </header>
+    <>
+    <Banda titulo={`Resultados del ${fechaCorta(fecha)}`} sub={`${mayus(fechaLarga(fecha))} · ${res.length} sorteos con resultado`} corta>
       <nav className="pasos" aria-label="Otros días">
-        <Link href={`/resultados/${fechaSlug(antes)}`}>← {fechaLarga(antes)}</Link>
-        {despues <= hoyISO() ? <Link href={despues === hoyISO() ? '/' : `/resultados/${fechaSlug(despues)}`}>{fechaLarga(despues)} →</Link> : <span />}
+        <Link href={`/resultados/${fechaSlug(antes)}`}>← {fechaCorta(antes)}</Link>
+        {despues <= hoyISO() ? <Link href={despues === hoyISO() ? '/' : `/resultados/${fechaSlug(despues)}`}>{despues === hoyISO() ? 'Hoy' : fechaCorta(despues)} →</Link> : <span />}
       </nav>
+    </Banda>
+    <div className="contenedor">
       {grupos.length === 0 && <p className="vacio" style={{ marginTop: 20 }}>No hay resultados guardados para este día.</p>}
       {grupos.map((g) => (
         <section key={g.titulo} className="seccion">
@@ -76,5 +76,6 @@ export default async function ResultadosDelDia({ params }: Props) {
         </section>
       ))}
     </div>
+    </>
   );
 }

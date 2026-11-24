@@ -4,7 +4,7 @@ import { Balotas, Numero } from './Numero';
 export function ResultadoGrande({ juego, r }: { juego: Juego; r: FilaResultado }) {
   return (
     <div className="resultado-grande">
-      <Numero r={r} tam="grande" />
+      <Numero r={r} tam="grande" cae />
       <div className="datos">
         {r.quinta && (
           <div className="dato">

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Banda } from '@/components/Banda';
 import { Buscador } from '@/components/Buscador';
 import { fechaMedia, fechaSlug, hoyISO, sumarDias } from '@/lib/fechas';
 import { juego } from '@/lib/juegos';
@@ -32,11 +33,9 @@ export default async function Buscar({ searchParams }: Props) {
   const exactos = res.filter((r) => r.numero === n);
 
   return (
+    <>
+    <Banda titulo="Buscar un número" sub="Chances y loterías de los últimos 90 días" corta />
     <div className="contenedor">
-      <header className="juego-cabeza" style={{ paddingTop: 26 }}>
-        <h1>Buscar un número</h1>
-        <p className="sub">Chances y loterías de los últimos 90 días</p>
-      </header>
       <section className="seccion">
         <Buscador valor={n} />
       </section>
@@ -83,5 +82,6 @@ export default async function Buscar({ searchParams }: Props) {
         </section>
       )}
     </div>
+    </>
   );
 }

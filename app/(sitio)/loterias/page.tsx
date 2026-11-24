@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Banda } from '@/components/Banda';
 import { Listado } from '@/components/Listado';
 import { BALOTAS, LOTERIAS } from '@/lib/juegos';
 
@@ -12,11 +13,9 @@ export const metadata: Metadata = {
 
 export default function Loterias() {
   return (
+    <>
+    <Banda titulo="Loterías" sub="Número ganador y serie del último sorteo" corta />
     <div className="contenedor">
-      <header className="juego-cabeza" style={{ paddingTop: 26 }}>
-        <h1>Loterías</h1>
-        <p className="sub">Número ganador y serie del último sorteo</p>
-      </header>
       <section className="seccion">
         <Listado juegos={LOTERIAS} />
       </section>
@@ -27,5 +26,6 @@ export default function Loterias() {
         <Listado juegos={BALOTAS} />
       </section>
     </div>
+    </>
   );
 }

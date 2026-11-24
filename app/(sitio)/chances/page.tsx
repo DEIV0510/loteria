@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Banda } from '@/components/Banda';
 import { Listado } from '@/components/Listado';
 import { CHANCES } from '@/lib/juegos';
 
@@ -12,14 +13,13 @@ export const metadata: Metadata = {
 
 export default function Chances() {
   return (
-    <div className="contenedor">
-      <header className="juego-cabeza" style={{ paddingTop: 26 }}>
-        <h1>Chances</h1>
-        <p className="sub">Último resultado de cada chance</p>
-      </header>
-      <section className="seccion">
-        <Listado juegos={CHANCES} />
-      </section>
-    </div>
+    <>
+      <Banda titulo="Chances" sub="Último resultado de cada chance" corta />
+      <div className="contenedor">
+        <section className="seccion">
+          <Listado juegos={CHANCES} />
+        </section>
+      </div>
+    </>
   );
 }

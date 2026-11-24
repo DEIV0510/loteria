@@ -50,7 +50,7 @@ export default async function LayoutSitio({ children }: { children: React.ReactN
           </Link>
           <nav className="menu" aria-label="Principal">
             {MENU.map((m) => (
-              <Link key={m.href} href={m.href}>
+              <Link key={m.href} href={m.href} className={m.href === '/buscar' ? 'destacar' : undefined}>
                 {m.texto}
               </Link>
             ))}

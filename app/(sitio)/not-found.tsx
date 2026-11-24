@@ -1,17 +1,17 @@
 import Link from 'next/link';
+import { Banda } from '@/components/Banda';
 
 export default function NoEncontrado() {
   return (
+    <>
+    <Banda titulo="No encontramos esa página" sub="Puede que el sorteo o la fecha no existan." corta />
     <div className="contenedor">
-      <header className="juego-cabeza" style={{ paddingTop: 40 }}>
-        <h1>No encontramos esa página</h1>
-        <p className="sub">Puede que el sorteo o la fecha no existan.</p>
-      </header>
-      <p style={{ marginTop: 20 }}>
+      <p style={{ marginTop: 24 }}>
         <Link href="/" className="boton">
           Ver los resultados de hoy
         </Link>
       </p>
     </div>
+    </>
   );
 }

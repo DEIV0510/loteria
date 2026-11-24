@@ -11,8 +11,8 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
     description: 'Resultados de loterías y chances de Colombia, al momento.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#f3f1ea',
-    theme_color: '#111317',
+    background_color: '#f3faf6',
+    theme_color: '#05532a',
     lang: 'es-CO',
     icons: [
       { src: '/icon.svg', sizes: 'any', type: 'image/svg+xml' },
