@@ -59,6 +59,10 @@ const ESQUEMA = [
 function crear(): Client {
   const url = process.env.TURSO_DATABASE_URL;
   if (url) return createClient({ url, authToken: process.env.TURSO_AUTH_TOKEN });
+  // En Vercel el disco es de solo lectura y se borra: sin Turso el sitio saldría vacío.
+  if (process.env.VERCEL) {
+    throw new Error('Falta la base de datos: agrega TURSO_DATABASE_URL y TURSO_AUTH_TOKEN en Vercel.');
+  }
   mkdirSync('data', { recursive: true });
   return createClient({ url: 'file:data/loteria.db' });
 }
