@@ -1,0 +1,358 @@
+/* Panel del dueño: pensado para usarlo con el pulgar desde el celular. */
+.panel-barra {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.panel-barra .contenedor {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 54px;
+}
+
+.panel-barra .titulo {
+  font-weight: 800;
+  font-stretch: 92%;
+  margin-right: auto;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.panel-barra button {
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--bg) 40%, transparent);
+  color: var(--bg);
+  padding: 7px 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.panel-pestanas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 54px;
+  z-index: 19;
+}
+
+.panel-pestanas a {
+  text-align: center;
+  padding: 13px 6px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  text-decoration: none;
+  color: var(--muted);
+  border-bottom: 3px solid transparent;
+}
+
+.panel-pestanas a[aria-current='page'] {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
+
+.panel {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 18px var(--gutter) 80px;
+  display: grid;
+  gap: 18px;
+}
+
+.panel h1 {
+  font-size: 1.4rem;
+  font-stretch: 92%;
+}
+
+.panel h2 {
+  font-size: 1.05rem;
+}
+
+.caja {
+  background: var(--card);
+  border: 1px solid var(--line);
+  padding: 16px;
+  display: grid;
+  gap: 14px;
+}
+
+.caja-cabeza {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.ayuda {
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+
+.campo {
+  display: grid;
+  gap: 6px;
+}
+
+.campo label,
+.campo .etiqueta {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+.campo input[type='text'],
+.campo input[type='url'],
+.campo input[type='email'],
+.campo input[type='password'],
+.campo input[type='date'],
+.campo input[inputmode],
+.campo select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--line-2);
+  background: var(--bg);
+  border-radius: 0;
+  font-size: 1rem;
+  min-height: 48px;
+}
+
+.campo input:focus,
+.campo select:focus {
+  border-color: var(--ink);
+  outline: none;
+}
+
+.campo input.cifras-input {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  font-variant-numeric: tabular-nums;
+}
+
+.fila-campos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+/* Interruptor */
+.interruptor {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--line-2);
+  background: var(--bg);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.interruptor input {
+  appearance: none;
+  width: 48px;
+  height: 28px;
+  background: var(--line-2);
+  position: relative;
+  cursor: pointer;
+  flex: none;
+  transition: background 0.15s;
+}
+
+.interruptor input::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  background: #fff;
+  transition: transform 0.15s;
+}
+
+.interruptor input:checked {
+  background: var(--accent);
+}
+
+.interruptor input:checked::after {
+  transform: translateX(20px);
+}
+
+/* Imagen del espacio */
+.vista-previa {
+  border: 1px dashed var(--line-2);
+  background: var(--bg);
+  min-height: 90px;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  font-size: 0.88rem;
+  text-align: center;
+  padding: 6px;
+}
+
+.vista-previa img {
+  width: 100%;
+  height: auto;
+}
+
+.subir {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px;
+  border: 1px solid var(--ink);
+  background: var(--card);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.subir input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.acciones .boton {
+  flex: 1;
+  min-height: 48px;
+}
+
+.mensaje {
+  padding: 10px 12px;
+  font-size: 0.92rem;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+}
+
+.mensaje.error {
+  border-left-color: #b3261e;
+  background: color-mix(in srgb, #b3261e 10%, var(--card));
+}
+
+/* Lista de sorteos de hoy */
+.sorteos {
+  display: grid;
+  background: var(--card);
+  border: 1px solid var(--line);
+}
+
+.sorteo {
+  border-top: 1px solid var(--line);
+}
+
+.sorteo:first-child {
+  border-top: 0;
+}
+
+.sorteo > summary {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 70px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  cursor: pointer;
+  min-height: 56px;
+}
+
+.sorteo > summary::-webkit-details-marker {
+  display: none;
+}
+
+.sorteo[open] > summary {
+  background: var(--bg);
+}
+
+.sorteo .hora {
+  font-weight: 700;
+  font-size: 0.86rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.sorteo .nombre {
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.25;
+}
+
+.sorteo .origen {
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.sorteo .valor {
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.sorteo .valor.falta {
+  font-weight: 600;
+  letter-spacing: 0;
+  font-size: 0.84rem;
+  color: var(--muted);
+}
+
+.sorteo .valor.falta.espera {
+  color: var(--wait);
+}
+
+.sorteo .editor {
+  padding: 4px 12px 16px;
+  display: grid;
+  gap: 12px;
+  background: var(--bg);
+}
+
+.bitacora {
+  font-size: 0.84rem;
+  display: grid;
+  gap: 6px;
+  max-height: 340px;
+  overflow: auto;
+}
+
+.bitacora div {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 8px;
+  border-top: 1px solid var(--line);
+  padding-top: 6px;
+}
+
+.bitacora time {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.entrar {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 20px var(--gutter);
+}
+
+.entrar .caja {
+  width: 100%;
+  max-width: 380px;
+}
