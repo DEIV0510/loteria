@@ -34,7 +34,7 @@ La clave del panel en esta PC está en `.env.local` (`ADMIN_PASSWORD`).
 1. Importar el repo en Vercel.
 2. Base de datos: `vercel integration add tursocloud/database` (crea `TURSO_DATABASE_URL` y `TURSO_AUTH_TOKEN`).
 3. Variables: `ADMIN_PASSWORD`, `CRON_SECRET`, `NEXT_PUBLIC_SITE_URL` (ver `.env.example`).
-4. Cargar el historial en la base de producción: correr `scripts/cargar-historial.ts` con las variables de Turso.
-5. Cron de respaldo: en GitHub → Settings → Secrets → Actions, crear `SITE_URL` y `CRON_SECRET` (el workflow `.github/workflows/robot.yml` llama a `/api/robot` cada 5 minutos de 10 a. m. a medianoche).
+4. Cargar el historial en la base de producción: `npx tsx --env-file=.env.produccion scripts/copiar-a-produccion.ts` (copia la base local a Turso).
+5. Cron de respaldo: `.github/workflows/robot.yml` visita `/api/hoy` cada 5 minutos de 10 a. m. a medianoche (no necesita secretos). Si cambia el dominio, cambiar `SITIO` en ese archivo.
 
 Nota: el plan gratis de Vercel es para uso no comercial; con AdSense corresponde el plan Pro.
