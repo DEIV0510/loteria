@@ -69,6 +69,11 @@ function crear(): Client {
 
 async function preparar(c: Client) {
   await c.batch(ESQUEMA, 'write');
+  // Columnas agregadas después de la primera versión.
+  const cols = await c.execute('PRAGMA table_info(espacios)');
+  if (!cols.rows.some((r) => r.name === 'posicion')) {
+    await c.execute('ALTER TABLE espacios ADD COLUMN posicion TEXT');
+  }
 }
 
 export async function db(): Promise<Client> {

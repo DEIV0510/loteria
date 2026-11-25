@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { fechaCorta, hora12 } from '@/lib/fechas';
+import { textoPremio } from '@/lib/premios';
 import type { FilaResultado, Juego } from '@/lib/tipos';
 import { Numero } from './Numero';
 
@@ -29,13 +30,16 @@ export function Tarjeta({
   hora,
   conFecha,
   nueva,
+  premio,
 }: {
   juego: Juego;
   r: FilaResultado;
   hora?: string | null;
   conFecha?: boolean;
   nueva?: boolean;
+  premio?: number;
 }) {
+  const p = textoPremio(premio);
   return (
     <Link href={`/${juego.slug}`} className={`tarjeta${nueva ? ' nueva' : ''}`}>
       <span className="tarjeta-cabeza">
@@ -49,6 +53,11 @@ export function Tarjeta({
         {nueva && <span className="marca-nueva">Nuevo</span>}
         <Detalles r={r} />
       </span>
+      {p && (
+        <span className="premio chico">
+          Premio mayor <b className="num">{p}</b>
+        </span>
+      )}
     </Link>
   );
 }

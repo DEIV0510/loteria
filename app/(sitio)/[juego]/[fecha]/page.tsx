@@ -1,14 +1,15 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Espacio } from '@/components/Espacio';
+import { Espacios } from '@/components/Espacio';
 import { ResultadoGrande } from '@/components/ResultadoGrande';
 import { Secos } from '@/components/Secos';
-import { leerEspacios } from '@/lib/espacios';
+import { enPosicion, leerEspacios } from '@/lib/espacios';
 import { Banda } from '@/components/Banda';
 import { fechaCorta, fechaLarga, fechaSlug, slugAFecha } from '@/lib/fechas';
 import { juego as buscarJuego } from '@/lib/juegos';
 import { filas } from '@/lib/db';
+import { leerPremios } from '@/lib/premios';
 import { resultado } from '@/lib/resultados';
 
 export const revalidate = 300;
@@ -44,7 +45,7 @@ export default async function PaginaFecha({ params }: Props) {
   const j = buscarJuego(p.juego);
   const fecha = slugAFecha(p.fecha);
   if (!j || !fecha) notFound();
-  const [r, espacios, v] = await Promise.all([resultado(j.slug, fecha), leerEspacios(), vecinos(j.slug, fecha)]);
+  const [r, espacios, v, premios] = await Promise.all([resultado(j.slug, fecha), leerEspacios(), vecinos(j.slug, fecha), leerPremios()]);
   if (!r) notFound();
 
   return (
@@ -55,14 +56,14 @@ export default async function PaginaFecha({ params }: Props) {
         migas={[{ href: '/', texto: 'Inicio' }, { href: `/${j.slug}`, texto: j.nombre }, { texto: fechaCorta(fecha) }]}
       />
       <div className="contenedor solapa">
-        <ResultadoGrande juego={j} r={r} />
+        <ResultadoGrande juego={j} r={r} premio={premios[j.slug]} />
         <nav className="pasos" aria-label="Otras fechas">
           {v.antes ? <Link href={`/${j.slug}/${fechaSlug(v.antes)}`}>← {fechaLarga(v.antes)}</Link> : <span />}
           {v.despues ? <Link href={`/${j.slug}/${fechaSlug(v.despues)}`}>{fechaLarga(v.despues)} →</Link> : <Link href={`/${j.slug}`}>Último resultado →</Link>}
         </nav>
       </div>
 
-      <Espacio e={espacios.get('debajo')} />
+      <Espacios lista={enPosicion(espacios, 'debajo')} />
 
       <div className="contenedor">
         {r.secos && r.secos.length > 0 && (

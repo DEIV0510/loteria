@@ -3,7 +3,9 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { guardarAjustes } from '@/lib/ajustes';
 import { anotar } from '@/lib/db';
-import { enlaceValido, ESPACIOS, guardarEspacio, guardarMedio, leerEspacios, type IdEspacio } from '@/lib/espacios';
+import { enlaceValido, guardarEspacio, guardarMedio, IMAGENES, leerEspacios, posicionValida, type IdImagen } from '@/lib/espacios';
+import { guardarPremio } from '@/lib/premios';
+import { LOTERIAS } from '@/lib/juegos';
 import { validaISO } from '@/lib/fechas';
 import { juego } from '@/lib/juegos';
 import { refrescarSitio } from '@/lib/refrescar';
@@ -37,8 +39,10 @@ const TIPOS_IMAGEN = ['image/webp', 'image/jpeg', 'image/png', 'image/gif', 'ima
 
 export async function guardarEspacioAccion(_: Estado, f: FormData): Promise<Estado> {
   await exigirSesion();
-  const id = txt(f, 'id') as IdEspacio;
-  if (!ESPACIOS.some((e) => e.id === id)) return { ok: false, msg: 'Espacio desconocido.' };
+  const id = txt(f, 'id') as IdImagen;
+  if (!IMAGENES.some((e) => e.id === id)) return { ok: false, msg: 'Imagen desconocida.' };
+  const posicion = txt(f, 'posicion');
+  if (!posicionValida(posicion)) return { ok: false, msg: 'Elige dónde va la imagen.' };
   const enlace = txt(f, 'enlace');
   const texto = txt(f, 'texto').slice(0, 140);
   const activo = f.get('activo') === 'on';
@@ -53,15 +57,15 @@ export async function guardarEspacioAccion(_: Estado, f: FormData): Promise<Esta
     const alto = Math.round(Number(f.get('alto')) || 0) || null;
     imagen = await guardarMedio(new Uint8Array(await archivo.arrayBuffer()), archivo.type, ancho, alto);
   }
-  const tieneImagen = imagen === undefined ? !!(await leerEspacios()).get(id)?.imagen : !!imagen;
+  const tieneImagen = imagen === undefined ? !!(await leerEspacios()).find((e) => e.id === id)?.imagen : !!imagen;
   if (activo && !tieneImagen) return { ok: false, msg: 'Para encenderlo, sube primero una imagen.' };
   if (activo && !enlaceValido(enlace)) return { ok: false, msg: 'Pon un enlace completo, por ejemplo https://chat.whatsapp.com/…' };
   if (enlace && !enlaceValido(enlace)) return { ok: false, msg: 'El enlace no es válido. Debe empezar por https://' };
 
-  await guardarEspacio({ id, imagen, enlace, texto, activo });
-  await anotar('espacio', `${id}: ${activo ? 'encendido' : 'apagado'} → ${enlace || '(sin enlace)'}`);
+  await guardarEspacio({ id, posicion, imagen, enlace, texto, activo });
+  await anotar('espacio', `${id} (${posicion}): ${activo ? 'encendida' : 'apagada'} → ${enlace || '(sin enlace)'}`);
   refrescarSitio();
-  return { ok: true, msg: activo ? 'Guardado. Ya se ve en la página.' : 'Guardado. Está apagado: no se muestra.' };
+  return { ok: true, msg: activo ? 'Guardado. Ya se ve en la página.' : 'Guardado. Está apagada: no se muestra.' };
 }
 
 // ——— Resultados ———
@@ -172,6 +176,17 @@ export async function guardarAjustesAccion(_: Estado, f: FormData): Promise<Esta
   await anotar('ajustes', 'Ajustes del sitio actualizados');
   refrescarSitio();
   return { ok: true, msg: 'Ajustes guardados.' };
+}
+
+export async function guardarPremiosAccion(_: Estado, f: FormData): Promise<Estado> {
+  await exigirSesion();
+  for (const l of LOTERIAS) {
+    const v = txt(f, `premio-${l.slug}`).replace(/D/g, '');
+    await guardarPremio(l.slug, v ? Number(v) : null);
+  }
+  await anotar('ajustes', 'Premios mayores actualizados');
+  refrescarSitio();
+  return { ok: true, msg: 'Premios guardados. Ya se ven en la página.' };
 }
 
 export async function cambiarClaveAccion(_: Estado, f: FormData): Promise<Estado> {

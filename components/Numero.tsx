@@ -1,6 +1,6 @@
 import type { FilaResultado } from '@/lib/tipos';
 
-type Tam = 'grande' | 'chica';
+type Tam = 'grande' | 'chica' | 'serie';
 
 /** Cifras como bolas de lotería. `cae` las anima como si salieran de la tómbola. */
 export function Cifras({ numero, tam, cae }: { numero: string; tam?: Tam; cae?: boolean }) {

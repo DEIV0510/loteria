@@ -1,10 +1,11 @@
 import { Tarjeta } from './Tarjeta';
+import { leerPremios } from '@/lib/premios';
 import { ultimos } from '@/lib/resultados';
 import type { Juego } from '@/lib/tipos';
 
 /** Último resultado de cada juego de la lista, más reciente primero. */
 export async function Listado({ juegos }: { juegos: Juego[] }) {
-  const u = await ultimos();
+  const [u, premios] = await Promise.all([ultimos(), leerPremios()]);
   const items = juegos
     .map((j) => ({ j, r: u.get(j.slug) }))
     .filter((x) => x.r)
@@ -12,7 +13,7 @@ export async function Listado({ juegos }: { juegos: Juego[] }) {
   return (
     <div className="rejilla">
       {items.map(({ j, r }) => (
-        <Tarjeta key={j.slug} juego={j} r={r!} conFecha />
+        <Tarjeta key={j.slug} juego={j} r={r!} conFecha premio={premios[j.slug]} />
       ))}
     </div>
   );

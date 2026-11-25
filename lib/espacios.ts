@@ -1,18 +1,29 @@
-// Espacios de imagen + enlace que el dueño maneja desde el celular.
+// Imágenes con enlace que el dueño maneja desde el celular.
+// Hay 4; en cada una elige dónde va. Si dos caen en el mismo lugar, se ven lado a lado.
 import { randomBytes } from 'node:crypto';
 import { filas, q } from './db';
 
-export const ESPACIOS = [
-  { id: 'encabezado', nombre: 'Encabezado', ayuda: 'Arriba de todo, debajo del nombre del sitio' },
-  { id: 'debajo', nombre: 'Debajo del encabezado', ayuda: 'Justo antes de los resultados de hoy' },
-  { id: 'mitad', nombre: 'Mitad de la página', ayuda: 'Entre los chances y las loterías' },
-  { id: 'abajo', nombre: 'Final de la página', ayuda: 'Antes del pie de página' },
+export const POSICIONES = [
+  { id: 'arriba', nombre: 'Arriba de todo', ayuda: 'Debajo del menú, antes de los resultados' },
+  { id: 'debajo', nombre: 'Debajo de las loterías', ayuda: 'Justo después de los resultados principales (recomendado)' },
+  { id: 'mitad', nombre: 'Mitad de la página', ayuda: 'Entre los chances y las loterías de la semana' },
+  { id: 'final', nombre: 'Final de la página', ayuda: 'Antes del pie de página' },
 ] as const;
 
-export type IdEspacio = (typeof ESPACIOS)[number]['id'];
+export type Posicion = (typeof POSICIONES)[number]['id'];
+
+export const IMAGENES = [
+  { id: 'imagen-1', posicion: 'debajo' },
+  { id: 'imagen-2', posicion: 'debajo' },
+  { id: 'imagen-3', posicion: 'arriba' },
+  { id: 'imagen-4', posicion: 'final' },
+] as const;
+
+export type IdImagen = (typeof IMAGENES)[number]['id'];
 
 export type Espacio = {
-  id: IdEspacio;
+  id: IdImagen;
+  posicion: Posicion;
   imagen: string | null; // id del medio
   enlace: string;
   texto: string; // texto alternativo de la imagen
@@ -22,40 +33,53 @@ export type Espacio = {
   alto: number | null;
 };
 
-export async function leerEspacios(): Promise<Map<IdEspacio, Espacio>> {
+export function posicionValida(p: string): p is Posicion {
+  return POSICIONES.some((x) => x.id === p);
+}
+
+export async function leerEspacios(): Promise<Espacio[]> {
   const r = await filas<Record<string, unknown>>(
     `SELECT e.*, m.ancho, m.alto FROM espacios e LEFT JOIN medios m ON m.id = e.imagen`,
   );
-  const m = new Map<IdEspacio, Espacio>();
-  for (const base of ESPACIOS) {
-    m.set(base.id, { id: base.id, imagen: null, enlace: '', texto: '', activo: false, actualizado: null, ancho: null, alto: null });
-  }
-  for (const x of r) {
-    const id = String(x.id) as IdEspacio;
-    if (!m.has(id)) continue;
-    m.set(id, {
-      id,
-      imagen: (x.imagen as string) ?? null,
-      enlace: String(x.enlace ?? ''),
-      texto: String(x.texto ?? ''),
-      activo: Number(x.activo) === 1,
-      actualizado: (x.actualizado as string) ?? null,
-      ancho: x.ancho == null ? null : Number(x.ancho),
-      alto: x.alto == null ? null : Number(x.alto),
-    });
-  }
-  return m;
+  const guardados = new Map(r.map((x) => [String(x.id), x]));
+  return IMAGENES.map((base) => {
+    const x = guardados.get(base.id);
+    const pos = String(x?.posicion ?? '');
+    return {
+      id: base.id,
+      posicion: posicionValida(pos) ? pos : base.posicion,
+      imagen: (x?.imagen as string) ?? null,
+      enlace: String(x?.enlace ?? ''),
+      texto: String(x?.texto ?? ''),
+      activo: Number(x?.activo) === 1,
+      actualizado: (x?.actualizado as string) ?? null,
+      ancho: x?.ancho == null ? null : Number(x.ancho),
+      alto: x?.alto == null ? null : Number(x.alto),
+    };
+  });
 }
 
-export async function guardarEspacio(e: { id: IdEspacio; imagen?: string | null; enlace: string; texto: string; activo: boolean }) {
+/** Las imágenes encendidas (con foto y enlace) de un lugar de la página. */
+export function enPosicion(lista: Espacio[], p: Posicion): Espacio[] {
+  return lista.filter((e) => e.posicion === p && e.activo && e.imagen && e.enlace);
+}
+
+export async function guardarEspacio(e: {
+  id: IdImagen;
+  posicion: Posicion;
+  imagen?: string | null;
+  enlace: string;
+  texto: string;
+  activo: boolean;
+}) {
   const ahora = new Date().toISOString();
   const previo = (await filas<{ imagen: string | null }>('SELECT imagen FROM espacios WHERE id = ?', [e.id]))[0];
   const imagen = e.imagen === undefined ? (previo?.imagen ?? null) : e.imagen;
   await q(
-    `INSERT INTO espacios (id, imagen, enlace, texto, activo, actualizado) VALUES (?, ?, ?, ?, ?, ?)
-     ON CONFLICT(id) DO UPDATE SET imagen = excluded.imagen, enlace = excluded.enlace, texto = excluded.texto,
-       activo = excluded.activo, actualizado = excluded.actualizado`,
-    [e.id, imagen, e.enlace, e.texto, e.activo ? 1 : 0, ahora],
+    `INSERT INTO espacios (id, posicion, imagen, enlace, texto, activo, actualizado) VALUES (?, ?, ?, ?, ?, ?, ?)
+     ON CONFLICT(id) DO UPDATE SET posicion = excluded.posicion, imagen = excluded.imagen, enlace = excluded.enlace,
+       texto = excluded.texto, activo = excluded.activo, actualizado = excluded.actualizado`,
+    [e.id, e.posicion, imagen, e.enlace, e.texto, e.activo ? 1 : 0, ahora],
   );
   // La imagen anterior ya no se usa en ningún espacio: se borra.
   if (previo?.imagen && previo.imagen !== imagen) {

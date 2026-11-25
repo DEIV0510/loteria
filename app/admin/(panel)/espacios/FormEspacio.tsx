@@ -34,7 +34,8 @@ async function preparar(archivo: File): Promise<{ archivo: File; ancho: number; 
 export function FormEspacio(p: {
   id: string;
   nombre: string;
-  ayuda: string;
+  posicion: string;
+  posiciones: { id: string; nombre: string; ayuda: string }[];
   imagen: string | null;
   enlace: string;
   texto: string;
@@ -44,6 +45,8 @@ export function FormEspacio(p: {
   const [vista, setVista] = useState<string | null>(p.imagen ? `/api/medios/${p.imagen}` : null);
   const [preparando, setPreparando] = useState(false);
   const [quitar, setQuitar] = useState(false);
+  const [pos, setPos] = useState(p.posicion);
+  const ayudaPos = p.posiciones.find((x) => x.id === pos)?.ayuda;
   const entrada = useRef<HTMLInputElement>(null);
   const ancho = useRef<HTMLInputElement>(null);
   const alto = useRef<HTMLInputElement>(null);
@@ -75,10 +78,7 @@ export function FormEspacio(p: {
       <input type="hidden" name="alto" ref={alto} />
       <input type="hidden" name="quitar" value={quitar ? '1' : '0'} />
       <div className="caja-cabeza">
-        <div>
-          <h2>{p.nombre}</h2>
-          <p className="ayuda">{p.ayuda}</p>
-        </div>
+        <h2>{p.nombre}</h2>
       </div>
 
       <div className="vista-previa">
@@ -105,6 +105,17 @@ export function FormEspacio(p: {
         )}
       </div>
 
+      <div className="campo">
+        <label htmlFor={`pos-${p.id}`}>Dónde va</label>
+        <select id={`pos-${p.id}`} name="posicion" value={pos} onChange={(e) => setPos(e.target.value)}>
+          {p.posiciones.map((x) => (
+            <option key={x.id} value={x.id}>
+              {x.nombre}
+            </option>
+          ))}
+        </select>
+        {ayudaPos && <span className="ayuda">{ayudaPos}</span>}
+      </div>
       <div className="campo">
         <label htmlFor={`enlace-${p.id}`}>Enlace al tocar la imagen</label>
         <input id={`enlace-${p.id}`} type="url" name="enlace" defaultValue={p.enlace} placeholder="https://chat.whatsapp.com/…" inputMode="url" autoComplete="off" />

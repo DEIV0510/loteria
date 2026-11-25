@@ -4,14 +4,17 @@ import { notFound } from 'next/navigation';
 import { Banda } from '@/components/Banda';
 import { Cuenta } from '@/components/Cuenta';
 import { EnVivo } from '@/components/EnVivo';
-import { Espacio } from '@/components/Espacio';
+import { Espacios } from '@/components/Espacio';
 import { Historial } from '@/components/Historial';
+import { Pronostico } from '@/components/Pronostico';
 import { ResultadoGrande } from '@/components/ResultadoGrande';
 import { Secos } from '@/components/Secos';
 import { horarioPartes, proximoTurno, ultimoTurno } from '@/lib/agenda';
-import { leerEspacios } from '@/lib/espacios';
+import { enPosicion, leerEspacios } from '@/lib/espacios';
 import { fechaLarga, hora12, hoyISO, mayus, sumarDias } from '@/lib/fechas';
 import { JUEGOS, juego as buscarJuego } from '@/lib/juegos';
+import { leerPremios } from '@/lib/premios';
+import { pronostico } from '@/lib/pronostico';
 import { historial, marcaDeCambio } from '@/lib/resultados';
 
 export const revalidate = 60;
@@ -41,7 +44,8 @@ export default async function PaginaJuego({ params }: Props) {
   const j = buscarJuego((await params).juego);
   if (!j) notFound();
   const ahora = Date.now();
-  const [filas, espacios, marca] = await Promise.all([historial(j.slug, 31), leerEspacios(), marcaDeCambio()]);
+  const [filas, espacios, marca, premios] = await Promise.all([historial(j.slug, 30), leerEspacios(), marcaDeCambio(), leerPremios()]);
+  const pron = j.tipo === 'chance' || j.tipo === 'loteria' ? pronostico(filas, 30) : null;
   const ultimo = filas[0] ?? null;
   const turno = ultimoTurno(j, ahora);
   const proximo = proximoTurno(j, ahora);
@@ -66,7 +70,7 @@ export default async function PaginaJuego({ params }: Props) {
         )}
 
         {ultimo ? (
-          <ResultadoGrande juego={j} r={ultimo} />
+          <ResultadoGrande juego={j} r={ultimo} premio={premios[j.slug]} />
         ) : (
           <p className="vacio">Aún no tenemos resultados de este sorteo.</p>
         )}
@@ -104,7 +108,7 @@ export default async function PaginaJuego({ params }: Props) {
         </div>
       </div>
 
-      <Espacio e={espacios.get('debajo')} />
+      <Espacios lista={enPosicion(espacios, 'debajo')} />
 
       <div className="contenedor">
         {ultimo?.secos && ultimo.secos.length > 0 && (
@@ -120,10 +124,18 @@ export default async function PaginaJuego({ params }: Props) {
         {filas.length > 1 && (
           <section className="seccion">
             <div className="seccion-cabeza">
-              <h2>Últimos sorteos</h2>
-              <span className="nota num">{filas.length - 1} anteriores</span>
+              <h2>Últimos {filas.length} sorteos</h2>
             </div>
-            <Historial juego={j} filas={filas.slice(1)} />
+            <Historial juego={j} filas={filas} />
+          </section>
+        )}
+
+        {pron && (
+          <section className="seccion" aria-labelledby="t-pronostico">
+            <div className="seccion-cabeza">
+              <h2 id="t-pronostico">Pronóstico para el próximo sorteo</h2>
+            </div>
+            <Pronostico p={pron} />
           </section>
         )}
 

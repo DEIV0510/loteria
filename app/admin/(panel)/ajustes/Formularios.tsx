@@ -1,7 +1,7 @@
 'use client';
 import { useActionState } from 'react';
 import type { Ajustes } from '@/lib/ajustes';
-import { cambiarClaveAccion, guardarAjustesAccion } from '../../acciones';
+import { cambiarClaveAccion, guardarAjustesAccion, guardarPremiosAccion } from '../../acciones';
 
 export function FormAjustes({ a }: { a: Ajustes }) {
   const [estado, accion, cargando] = useActionState(guardarAjustesAccion, null);
@@ -72,6 +72,35 @@ export function FormClave() {
       <div className="acciones">
         <button className="boton claro" type="submit" disabled={cargando}>
           {cargando ? 'Cambiando…' : 'Cambiar clave'}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+export function FormPremios({ loterias }: { loterias: { slug: string; nombre: string; millones: number | null }[] }) {
+  const [estado, accion, cargando] = useActionState(guardarPremiosAccion, null);
+  return (
+    <form action={accion} className="caja">
+      <h2>Premio mayor de cada lotería</h2>
+      <p className="ayuda">En millones de pesos. Sale debajo del sorteo y la serie. Déjalo vacío para no mostrarlo.</p>
+      {loterias.map((l) => (
+        <div key={l.slug} className="campo" style={{ gridTemplateColumns: '1fr 130px', alignItems: 'center' }}>
+          <label htmlFor={`premio-${l.slug}`}>{l.nombre}</label>
+          <input
+            id={`premio-${l.slug}`}
+            name={`premio-${l.slug}`}
+            inputMode="numeric"
+            defaultValue={l.millones ?? ''}
+            placeholder="millones"
+            autoComplete="off"
+          />
+        </div>
+      ))}
+      {estado && <p className={`mensaje${estado.ok ? '' : ' error'}`}>{estado.msg}</p>}
+      <div className="acciones">
+        <button className="boton" type="submit" disabled={cargando}>
+          {cargando ? 'Guardando…' : 'Guardar premios'}
         </button>
       </div>
     </form>

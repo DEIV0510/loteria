@@ -225,6 +225,18 @@ textarea {
   height: auto;
 }
 
+.espacio.varias {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+@media (min-width: 900px) {
+  .espacio.varias {
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  }
+}
+
 /* ——— Héroe verde ——— */
 .hero {
   position: relative;
@@ -281,7 +293,7 @@ textarea {
   .hero-texto {
     grid-area: texto;
   }
-  .destacado {
+  .destacados {
     grid-area: destacado;
   }
   .proximo-caja {
@@ -418,6 +430,156 @@ textarea {
   margin-left: auto;
   color: var(--verde);
   font-weight: 700;
+}
+
+.destacados {
+  display: grid;
+  gap: 12px;
+}
+
+.destacado-numeros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 18px;
+}
+
+.serie {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.serie-rotulo {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--verde);
+}
+
+.bolas.serie {
+  gap: 4px;
+}
+
+.bolas.serie .bola {
+  --t: 36px;
+  color: var(--verde-osc);
+  text-shadow: none;
+  background: radial-gradient(circle at 34% 28%, #ffffff 0%, #f4faf6 40%, #d4e8dc 100%);
+  box-shadow: inset 0 -3px 5px rgba(5, 83, 42, 0.16), 0 0 0 2px var(--verde), 0 3px 6px -2px rgba(3, 61, 31, 0.4);
+}
+
+/* Premio mayor: franjita verde con letra pequeña */
+.premio {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 0.86rem;
+  color: var(--verde-osc);
+  background: var(--verde-claro);
+  border-left: 4px solid var(--verde-vivo);
+  padding: 6px 10px;
+}
+
+.premio b {
+  font-weight: 900;
+  font-size: 0.98rem;
+}
+
+.premio.chico {
+  font-size: 0.76rem;
+  padding: 4px 8px;
+}
+
+.premio.chico b {
+  font-size: 0.84rem;
+}
+
+/* Pronóstico: cifras calientes y frías */
+.pronosticos {
+  display: grid;
+  gap: 12px;
+}
+
+@media (min-width: 860px) {
+  .pronosticos {
+    grid-template-columns: 1fr 1fr;
+  }
+  .pronostico-aviso {
+    grid-column: 1 / -1;
+  }
+}
+
+.pronostico {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--verde-vivo);
+  padding: 16px;
+  display: grid;
+  gap: 14px;
+}
+
+.pronostico.frio {
+  border-top-color: #6b8f7c;
+}
+
+.pronostico-cabeza {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+
+.pronostico-titulo {
+  font-size: 1.2rem;
+  font-weight: 900;
+  font-stretch: 90%;
+  color: var(--verde-osc);
+  letter-spacing: 0.02em;
+}
+
+.pronostico-nota {
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--verde);
+}
+
+.pronostico.frio .pronostico-nota {
+  color: #4d6e5d;
+}
+
+.pronostico-cifras {
+  display: flex;
+  gap: 10px;
+}
+
+.pronostico-pos {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.pronostico-pos .bola {
+  --t: 50px;
+}
+
+.pronostico-pos small {
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.3;
+}
+
+.pronostico-aviso {
+  font-size: 0.8rem;
+  color: var(--muted);
 }
 
 /* Próximo sorteo con reloj */

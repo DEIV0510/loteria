@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Script from 'next/script';
-import { Espacio } from '@/components/Espacio';
+import { Espacios } from '@/components/Espacio';
 import { Marca, WhatsApp } from '@/components/Iconos';
 import { leerAjustes } from '@/lib/ajustes';
-import { leerEspacios } from '@/lib/espacios';
+import { enPosicion, leerEspacios } from '@/lib/espacios';
 import { BALOTAS, CHANCES, LOTERIAS } from '@/lib/juegos';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -65,11 +65,11 @@ export default async function LayoutSitio({ children }: { children: React.ReactN
         ))}
       </nav>
 
-      <Espacio e={espacios.get('encabezado')} />
+      <Espacios lista={enPosicion(espacios, 'arriba')} primero />
 
       <main>{children}</main>
 
-      <Espacio e={espacios.get('abajo')} />
+      <Espacios lista={enPosicion(espacios, 'final')} />
 
       <footer className="pie" style={barra ? ({ '--barra-alto': '72px' } as React.CSSProperties) : undefined}>
         <div className="contenedor">

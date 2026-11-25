@@ -6,6 +6,7 @@ import { turnosDelDia } from '@/lib/agenda';
 import { Banda } from '@/components/Banda';
 import { fechaCorta, fechaLarga, fechaSlug, hoyISO, mayus, slugAFecha, sumarDias } from '@/lib/fechas';
 import { JUEGOS } from '@/lib/juegos';
+import { leerPremios } from '@/lib/premios';
 import { resultadosDelDia } from '@/lib/resultados';
 
 export const revalidate = 60;
@@ -37,7 +38,7 @@ export default async function ResultadosDelDia({ params }: Props) {
   const p = (await params).fecha;
   const fecha = resolver(p);
   if (!fecha || fecha > hoyISO()) notFound();
-  const res = await resultadosDelDia(fecha);
+  const [res, premios] = await Promise.all([resultadosDelDia(fecha), leerPremios()]);
   const porJuego = new Map(res.map((r) => [r.juego, r]));
   const horas = new Map(turnosDelDia(fecha).map((t) => [t.juego.slug, t.hora]));
   const orden = (slug: string) => horas.get(slug) ?? '99:99';
@@ -70,7 +71,7 @@ export default async function ResultadosDelDia({ params }: Props) {
           </div>
           <div className="rejilla">
             {g.juegos.map((j) => (
-              <Tarjeta key={j.slug} juego={j} r={porJuego.get(j.slug)!} hora={horas.get(j.slug)} />
+              <Tarjeta key={j.slug} juego={j} r={porJuego.get(j.slug)!} hora={horas.get(j.slug)} premio={premios[j.slug]} />
             ))}
           </div>
         </section>
