@@ -7,7 +7,7 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
   const a = await leerAjustes();
   return {
     name: a.nombre,
-    short_name: a.nombre.length > 14 ? 'Resultados' : a.nombre,
+    short_name: a.nombre.length > 16 ? a.nombre.slice(0, 16) : a.nombre,
     description: 'Resultados de loterías y chances de Colombia, al momento.',
     start_url: '/',
     display: 'standalone',

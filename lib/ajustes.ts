@@ -12,7 +12,7 @@ export type Ajustes = {
 };
 
 export const AJUSTES_BASE: Ajustes = {
-  nombre: 'Resultados al Día',
+  nombre: 'Loterías al Día',
   lema: 'Loterías y chances de Colombia',
   whatsappUrl: '',
   whatsappTexto: 'Únete al grupo de resultados',
