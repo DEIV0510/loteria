@@ -17,21 +17,24 @@ export type Reporte = {
   ms: number;
 };
 
-type Estado = { ultimaFecha: string | null; tieneSecos: boolean; revisado: number };
+type Estado = { ultimaFecha: string | null; tieneSecos: boolean; revisado: number; sinSorteo: boolean; sinSigno: boolean; manual: boolean };
 
 async function estados(): Promise<Map<string, Estado>> {
-  const res = await filas<{ juego: string; f: string; secos: string | null }>(
-    `SELECT r.juego, r.fecha AS f, r.secos FROM resultados r
+  const res = await filas<{ juego: string; f: string; secos: string | null; sorteo: string | null; signo: string | null; manual: number }>(
+    `SELECT r.juego, r.fecha AS f, r.secos, r.sorteo, r.signo, r.manual FROM resultados r
      JOIN (SELECT juego, MAX(fecha) AS f FROM resultados GROUP BY juego) u ON u.juego = r.juego AND u.f = r.fecha`,
   );
   const rev = await filas<{ juego: string; ultima: number }>('SELECT juego, ultima FROM revisiones');
   const m = new Map<string, Estado>();
-  for (const j of JUEGOS) m.set(j.slug, { ultimaFecha: null, tieneSecos: false, revisado: 0 });
+  for (const j of JUEGOS) m.set(j.slug, { ultimaFecha: null, tieneSecos: false, revisado: 0, sinSorteo: false, sinSigno: false, manual: false });
   for (const r of res) {
     const e = m.get(String(r.juego));
     if (e) {
       e.ultimaFecha = String(r.f);
       e.tieneSecos = !!r.secos;
+      e.sinSorteo = !r.sorteo;
+      e.sinSigno = !r.signo;
+      e.manual = Number(r.manual) === 1;
     }
   }
   for (const r of rev) {
@@ -57,6 +60,11 @@ function prioridad(j: Juego, e: Estado, ahora: number): number | null {
     // Loterías: los premios secos a veces se publican después del número mayor.
     if (j.tipo === 'loteria' && !e.tieneSecos && e.ultimaFecha === t.fecha && pasado < 20 * 60 * MIN) {
       return desde > 15 * MIN ? 500 : null;
+    }
+    // Entró por la fuente B (sin número de sorteo, o un Astro sin signo): la A lo completa después.
+    const incompleto = (j.tipo === 'chance' || j.tipo === 'loteria') && (e.sinSorteo || (j.familia === 'Astro' && e.sinSigno));
+    if (incompleto && !e.manual && j.fuentes.rdl && e.ultimaFecha === t.fecha && pasado < 6 * 60 * MIN) {
+      return desde > 10 * MIN ? 600 : null;
     }
     return null;
   }

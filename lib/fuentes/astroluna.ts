@@ -23,13 +23,15 @@ export function leerAL(html: string, tipo: string): FilaAL[] {
     const numero = soloDigitos(td[1]);
     if (!fecha || numero.length < 3) continue;
     const extra = td[2] ?? '';
+    // Astro Sol: la columna dice «Serie/Quinta» pero trae el signo. Se decide por el contenido.
+    const signo = tipo === 'chance' ? signoNormal(extra) : null;
     filas.push({
       fecha,
       numero,
       sorteo: null,
       serie: tipo === 'loteria' ? soloDigitos(extra) || null : null,
-      quinta: tipo === 'chance' && !esSigno ? soloDigitos(extra) || null : null,
-      signo: esSigno ? signoNormal(extra) : null,
+      quinta: tipo === 'chance' && !esSigno && !signo ? soloDigitos(extra) || null : null,
+      signo: esSigno || signo ? signo ?? signoNormal(extra) : null,
       balotas: null,
       revancha: null,
       secos: null,

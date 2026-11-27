@@ -47,6 +47,10 @@ export async function guardarResultado(r: Resultado, opciones: { manual?: boolea
 
   if (previo) {
     const antes = aFila(previo);
+    // El robot nunca borra un dato que ya teníamos: solo completa lo que falta.
+    if (!manual) {
+      r = { ...r, serie: r.serie ?? antes.serie, quinta: r.quinta ?? antes.quinta, signo: r.signo ?? antes.signo };
+    }
     const cambia =
       antes.numero !== r.numero ||
       (r.serie ?? null) !== antes.serie ||

@@ -1,12 +1,15 @@
 // Imágenes con enlace que el dueño maneja desde el celular.
-// Hay 6; en cada una elige dónde va. Si dos caen en el mismo lugar, se ven lado a lado.
+// Hay 8; en cada una elige dónde va. Si dos caen en el mismo lugar, se ven lado a lado.
 import { randomBytes } from 'node:crypto';
 import { filas, q } from './db';
 
 export const POSICIONES = [
   { id: 'arriba', nombre: 'Arriba de todo', ayuda: 'Debajo del menú, antes de los resultados' },
-  { id: 'sobre-resultado', nombre: 'Encima del resultado', ayuda: 'En la parte verde, justo encima del último resultado (en la portada y en la página de cada sorteo)' },
-  { id: 'bajo-resultado', nombre: 'Debajo del resultado', ayuda: 'Justo debajo del último resultado; el reloj del próximo sorteo baja un poco (en la portada y en la página de cada sorteo)' },
+  { id: 'sobre-resultado', nombre: 'Portada: encima del resultado', ayuda: 'En la parte verde de la portada, justo encima del último resultado' },
+  { id: 'entre-loterias', nombre: 'Portada: entre las loterías', ayuda: 'Debajo de la primera lotería del día (por ejemplo entre Medellín y Risaralda). Solo se ve cuando arriba están las loterías' },
+  { id: 'bajo-resultado', nombre: 'Portada: donde está el reloj', ayuda: 'Debajo del último resultado; el reloj del próximo sorteo y todo lo demás bajan' },
+  { id: 'sorteo-sobre', nombre: 'Cada sorteo: encima del resultado', ayuda: 'En la página de cada lotería o chance, encima del número' },
+  { id: 'sorteo-bajo', nombre: 'Cada sorteo: donde está el horario', ayuda: 'En la página de cada lotería o chance, debajo del número; el horario y el próximo sorteo bajan' },
   { id: 'debajo', nombre: 'Debajo de las loterías', ayuda: 'Justo después de los resultados principales (recomendado)' },
   { id: 'mitad', nombre: 'Mitad de la página', ayuda: 'Entre los chances y las loterías de la semana' },
   { id: 'final', nombre: 'Final de la página', ayuda: 'Antes del pie de página' },
@@ -21,6 +24,8 @@ export const IMAGENES = [
   { id: 'imagen-4', posicion: 'final' },
   { id: 'imagen-5', posicion: 'sobre-resultado' },
   { id: 'imagen-6', posicion: 'bajo-resultado' },
+  { id: 'imagen-7', posicion: 'sorteo-bajo' },
+  { id: 'imagen-8', posicion: 'entre-loterias' },
 ] as const;
 
 export const FORMATOS = [

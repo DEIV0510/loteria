@@ -69,7 +69,7 @@ export default async function PaginaJuego({ params }: Props) {
           </p>
         )}
 
-        <Espacios lista={enPosicion(espacios, 'sobre-resultado')} enHero="sobre" primero />
+        <Espacios lista={enPosicion(espacios, 'sorteo-sobre')} enHero="sobre" primero />
 
         {ultimo ? (
           <ResultadoGrande juego={j} r={ultimo} premio={premios[j.slug]} />
@@ -77,7 +77,7 @@ export default async function PaginaJuego({ params }: Props) {
           <p className="vacio">Aún no tenemos resultados de este sorteo.</p>
         )}
 
-        <Espacios lista={enPosicion(espacios, 'bajo-resultado')} enHero="bajo" primero />
+        <Espacios lista={enPosicion(espacios, 'sorteo-bajo')} enHero="bajo" primero />
 
         <div className="ficha">
           <div>

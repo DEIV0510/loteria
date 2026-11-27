@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Fragment } from 'react';
 import { Buscador } from '@/components/Buscador';
 import { Cinta } from '@/components/Cinta';
 import { Cuenta } from '@/components/Cuenta';
@@ -69,14 +70,16 @@ export default async function Inicio() {
           {principal && (
             <div className="destacados">
               {principal.modo === 'loterias' ? (
-                principal.loterias.map((x) => (
-                  <DestacadoLoteria
-                    key={x.juego.slug}
-                    juego={x.juego}
-                    r={x.resultado}
-                    premio={p.premios[x.juego.slug]}
-                    rotulo={rotuloLoteria(principal.fecha)}
-                  />
+                principal.loterias.map((x, i) => (
+                  <Fragment key={x.juego.slug}>
+                    <DestacadoLoteria
+                      juego={x.juego}
+                      r={x.resultado}
+                      premio={p.premios[x.juego.slug]}
+                      rotulo={rotuloLoteria(principal.fecha)}
+                    />
+                    {i === 0 && <Espacios lista={enPosicion(espacios, 'entre-loterias')} enHero="entre" primero />}
+                  </Fragment>
                 ))
               ) : (
                 <DestacadoChance
