@@ -3,7 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { guardarAjustes } from '@/lib/ajustes';
 import { anotar } from '@/lib/db';
-import { enlaceValido, guardarEspacio, guardarMedio, IMAGENES, leerEspacios, posicionValida, type IdImagen } from '@/lib/espacios';
+import { enlaceValido, formatoValido, guardarEspacio, guardarMedio, IMAGENES, leerEspacios, posicionValida, type IdImagen } from '@/lib/espacios';
 import { guardarPremio } from '@/lib/premios';
 import { LOTERIAS } from '@/lib/juegos';
 import { validaISO } from '@/lib/fechas';
@@ -43,6 +43,8 @@ export async function guardarEspacioAccion(_: Estado, f: FormData): Promise<Esta
   if (!IMAGENES.some((e) => e.id === id)) return { ok: false, msg: 'Imagen desconocida.' };
   const posicion = txt(f, 'posicion');
   if (!posicionValida(posicion)) return { ok: false, msg: 'Elige dónde va la imagen.' };
+  const fmt = txt(f, 'formato');
+  const formato = formatoValido(fmt) ? fmt : 'libre';
   const enlace = txt(f, 'enlace');
   const texto = txt(f, 'texto').slice(0, 140);
   const activo = f.get('activo') === 'on';
@@ -62,7 +64,7 @@ export async function guardarEspacioAccion(_: Estado, f: FormData): Promise<Esta
   if (activo && !enlaceValido(enlace)) return { ok: false, msg: 'Pon un enlace completo, por ejemplo https://chat.whatsapp.com/…' };
   if (enlace && !enlaceValido(enlace)) return { ok: false, msg: 'El enlace no es válido. Debe empezar por https://' };
 
-  await guardarEspacio({ id, posicion, imagen, enlace, texto, activo });
+  await guardarEspacio({ id, posicion, formato, imagen, enlace, texto, activo });
   await anotar('espacio', `${id} (${posicion}): ${activo ? 'encendida' : 'apagada'} → ${enlace || '(sin enlace)'}`);
   refrescarSitio();
   return { ok: true, msg: activo ? 'Guardado. Ya se ve en la página.' : 'Guardado. Está apagada: no se muestra.' };

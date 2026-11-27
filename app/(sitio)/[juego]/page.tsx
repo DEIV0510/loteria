@@ -69,11 +69,15 @@ export default async function PaginaJuego({ params }: Props) {
           </p>
         )}
 
+        <Espacios lista={enPosicion(espacios, 'sobre-resultado')} enHero="sobre" primero />
+
         {ultimo ? (
           <ResultadoGrande juego={j} r={ultimo} premio={premios[j.slug]} />
         ) : (
           <p className="vacio">Aún no tenemos resultados de este sorteo.</p>
         )}
+
+        <Espacios lista={enPosicion(espacios, 'bajo-resultado')} enHero="bajo" primero />
 
         <div className="ficha">
           <div>
@@ -135,6 +139,7 @@ export default async function PaginaJuego({ params }: Props) {
             <div className="seccion-cabeza">
               <h2 id="t-pronostico">Pronóstico para el próximo sorteo</h2>
             </div>
+            <p className="seccion-sub">Basado en los últimos {pron.sorteos} resultados</p>
             <Pronostico p={pron} />
           </section>
         )}

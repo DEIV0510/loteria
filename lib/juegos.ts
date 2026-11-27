@@ -40,7 +40,7 @@ export const JUEGOS: Juego[] = [
   j('chontico-noche', 'Chontico Noche', 'chance', sem('19:00', '22:00', '20:00'), 'chontico-noche', 'chontico-noche', 'Chontico', 'Telepacífico'),
   j('culona-dia', 'Culona Día', 'chance', todos('14:30'), 'culona-dia', 'culona-dia', 'Culona', 'Canal TRO'),
   j('culona-noche', 'Culona Noche', 'chance', sem('20:30', '20:30', '20:00'), 'culona-noche', 'culona-noche', 'Culona', 'Canal TRO'),
-  j('dorado-manana', 'Dorado Mañana', 'chance', lunSab('11:00'), 'dorado-manana', 'dorado-manana', 'Dorado', 'Canal Uno'),
+  j('dorado-manana', 'Dorado Mañana', 'chance', lunSab('10:56'), 'dorado-manana', 'dorado-manana', 'Dorado', 'Canal Uno'),
   j('dorado-tarde', 'Dorado Tarde', 'chance', lunSab('15:30'), 'dorado-tarde', 'dorado-tarde', 'Dorado', 'Canal Uno'),
   j('dorado-noche', 'Dorado Noche', 'chance', sem('22:05', '22:15', '19:25'), 'dorado-noche', 'dorado-noche', 'Dorado', 'Canal Uno'),
   j('fantastica-dia', 'Fantástica Día', 'chance', lunSab('13:00'), 'fantastica-dia', 'fantastica-dia', 'Fantástica', 'Telecaribe'),

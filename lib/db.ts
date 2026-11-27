@@ -74,6 +74,9 @@ async function preparar(c: Client) {
   if (!cols.rows.some((r) => r.name === 'posicion')) {
     await c.execute('ALTER TABLE espacios ADD COLUMN posicion TEXT');
   }
+  if (!cols.rows.some((r) => r.name === 'formato')) {
+    await c.execute('ALTER TABLE espacios ADD COLUMN formato TEXT');
+  }
 }
 
 export async function db(): Promise<Client> {

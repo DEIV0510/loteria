@@ -1,10 +1,12 @@
 // Imágenes con enlace que el dueño maneja desde el celular.
-// Hay 4; en cada una elige dónde va. Si dos caen en el mismo lugar, se ven lado a lado.
+// Hay 6; en cada una elige dónde va. Si dos caen en el mismo lugar, se ven lado a lado.
 import { randomBytes } from 'node:crypto';
 import { filas, q } from './db';
 
 export const POSICIONES = [
   { id: 'arriba', nombre: 'Arriba de todo', ayuda: 'Debajo del menú, antes de los resultados' },
+  { id: 'sobre-resultado', nombre: 'Encima del resultado', ayuda: 'En la parte verde, justo encima del último resultado (en la portada y en la página de cada sorteo)' },
+  { id: 'bajo-resultado', nombre: 'Debajo del resultado', ayuda: 'Justo debajo del último resultado; el reloj del próximo sorteo baja un poco (en la portada y en la página de cada sorteo)' },
   { id: 'debajo', nombre: 'Debajo de las loterías', ayuda: 'Justo después de los resultados principales (recomendado)' },
   { id: 'mitad', nombre: 'Mitad de la página', ayuda: 'Entre los chances y las loterías de la semana' },
   { id: 'final', nombre: 'Final de la página', ayuda: 'Antes del pie de página' },
@@ -17,13 +19,28 @@ export const IMAGENES = [
   { id: 'imagen-2', posicion: 'debajo' },
   { id: 'imagen-3', posicion: 'arriba' },
   { id: 'imagen-4', posicion: 'final' },
+  { id: 'imagen-5', posicion: 'sobre-resultado' },
+  { id: 'imagen-6', posicion: 'bajo-resultado' },
 ] as const;
+
+export const FORMATOS = [
+  { id: '16-9', nombre: 'Horizontal 16:9', ayuda: 'Ideal 1280 × 720 px' },
+  { id: '1-1', nombre: 'Cuadrada 1:1', ayuda: 'Ideal 1080 × 1080 px' },
+  { id: 'libre', nombre: 'Como la subí', ayuda: 'Se muestra entera, sin recortar' },
+] as const;
+
+export type Formato = (typeof FORMATOS)[number]['id'];
+
+export function formatoValido(f: string): f is Formato {
+  return FORMATOS.some((x) => x.id === f);
+}
 
 export type IdImagen = (typeof IMAGENES)[number]['id'];
 
 export type Espacio = {
   id: IdImagen;
   posicion: Posicion;
+  formato: Formato;
   imagen: string | null; // id del medio
   enlace: string;
   texto: string; // texto alternativo de la imagen
@@ -45,9 +62,11 @@ export async function leerEspacios(): Promise<Espacio[]> {
   return IMAGENES.map((base) => {
     const x = guardados.get(base.id);
     const pos = String(x?.posicion ?? '');
+    const fmt = String(x?.formato ?? '');
     return {
       id: base.id,
       posicion: posicionValida(pos) ? pos : base.posicion,
+      formato: formatoValido(fmt) ? fmt : 'libre',
       imagen: (x?.imagen as string) ?? null,
       enlace: String(x?.enlace ?? ''),
       texto: String(x?.texto ?? ''),
@@ -67,6 +86,7 @@ export function enPosicion(lista: Espacio[], p: Posicion): Espacio[] {
 export async function guardarEspacio(e: {
   id: IdImagen;
   posicion: Posicion;
+  formato: Formato;
   imagen?: string | null;
   enlace: string;
   texto: string;
@@ -76,10 +96,10 @@ export async function guardarEspacio(e: {
   const previo = (await filas<{ imagen: string | null }>('SELECT imagen FROM espacios WHERE id = ?', [e.id]))[0];
   const imagen = e.imagen === undefined ? (previo?.imagen ?? null) : e.imagen;
   await q(
-    `INSERT INTO espacios (id, posicion, imagen, enlace, texto, activo, actualizado) VALUES (?, ?, ?, ?, ?, ?, ?)
-     ON CONFLICT(id) DO UPDATE SET posicion = excluded.posicion, imagen = excluded.imagen, enlace = excluded.enlace,
+    `INSERT INTO espacios (id, posicion, formato, imagen, enlace, texto, activo, actualizado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+     ON CONFLICT(id) DO UPDATE SET posicion = excluded.posicion, formato = excluded.formato, imagen = excluded.imagen, enlace = excluded.enlace,
        texto = excluded.texto, activo = excluded.activo, actualizado = excluded.actualizado`,
-    [e.id, e.posicion, imagen, e.enlace, e.texto, e.activo ? 1 : 0, ahora],
+    [e.id, e.posicion, e.formato, imagen, e.enlace, e.texto, e.activo ? 1 : 0, ahora],
   );
   // La imagen anterior ya no se usa en ningún espacio: se borra.
   if (previo?.imagen && previo.imagen !== imagen) {

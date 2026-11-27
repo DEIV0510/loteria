@@ -225,6 +225,36 @@ textarea {
   height: auto;
 }
 
+.espacio a.formato-16-9 img,
+.espacio a.formato-1-1 img {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.espacio a.formato-1-1 img {
+  aspect-ratio: 1;
+}
+
+/* Una sola cuadrada no se estira a todo lo ancho en pantallas grandes */
+.espacio:not(.varias) a.formato-1-1 {
+  max-width: 520px;
+  margin-inline: auto;
+}
+
+/* Dentro de la parte verde (encima o debajo del resultado) */
+.espacio-hero {
+  margin: 0;
+}
+
+.espacio-hero a {
+  box-shadow: 0 10px 28px -14px rgba(0, 0, 0, 0.55);
+}
+
+.solapa > .espacio-hero {
+  margin: 14px 0;
+  position: relative;
+}
+
 .espacio.varias {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -286,9 +316,20 @@ textarea {
 @media (min-width: 900px) {
   .hero-grid {
     grid-template-columns: 1fr 1.1fr;
-    grid-template-areas: 'texto destacado' 'proximo destacado';
+    grid-template-areas: 'texto destacado' 'sobre destacado' 'bajo destacado' 'proximo destacado';
+    grid-template-rows: auto auto auto 1fr;
     align-items: start;
     column-gap: 36px;
+    row-gap: 0;
+  }
+  .hero-grid > * {
+    margin-bottom: 18px;
+  }
+  .espacio-hero.sobre {
+    grid-area: sobre;
+  }
+  .espacio-hero.bajo {
+    grid-area: bajo;
   }
   .hero-texto {
     grid-area: texto;
@@ -575,6 +616,12 @@ textarea {
   color: var(--muted);
   text-align: center;
   line-height: 1.3;
+}
+
+.seccion-sub {
+  margin: -6px 0 14px;
+  font-size: 0.86rem;
+  color: var(--muted);
 }
 
 .pronostico-aviso {
@@ -1322,6 +1369,58 @@ td.cifra-td {
 td a {
   text-decoration: none;
   font-weight: 600;
+}
+
+.historial td {
+  white-space: normal;
+  vertical-align: middle;
+}
+
+.historial td a {
+  display: block;
+}
+
+.historial .fecha-media,
+.historial .historial-sorteo {
+  display: block;
+}
+
+.historial .historial-sorteo {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.historial td.cifra-td {
+  white-space: nowrap;
+}
+
+.historial td.balotas-td {
+  white-space: normal;
+  letter-spacing: 0.04em;
+}
+
+.historial .fecha-larga {
+  display: none;
+}
+
+@media (max-width: 520px) {
+  .historial th,
+  .historial td {
+    padding: 10px 10px;
+  }
+  .historial td.cifra-td {
+    letter-spacing: 0.06em;
+  }
+}
+
+@media (min-width: 700px) {
+  .historial .fecha-larga {
+    display: block;
+  }
+  .historial .fecha-media {
+    display: none;
+  }
 }
 
 td a:hover {

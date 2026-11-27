@@ -1,4 +1,4 @@
-import { leerEspacios, POSICIONES } from '@/lib/espacios';
+import { FORMATOS, leerEspacios, POSICIONES } from '@/lib/espacios';
 import { FormEspacio } from './FormEspacio';
 
 export const dynamic = 'force-dynamic';
@@ -14,7 +14,7 @@ export default async function PanelEspacios() {
           van en el mismo lugar, salen una al lado de la otra. Si las apagas todas, la página muestra solo los resultados.
         </p>
         <p className="ayuda" style={{ marginTop: 6 }}>
-          Medidas: una sola, horizontal 1200 × 300 px. Dos juntas, cuadradas 600 × 600 px.
+          Formato: horizontal 16:9 (1280 × 720 px) o cuadrada 1:1 (1080 × 1080 px). Si la imagen no tiene esa forma, se recorta por los bordes para que encaje.
         </p>
       </div>
       {lista.map((x, i) => (
@@ -23,6 +23,8 @@ export default async function PanelEspacios() {
           id={x.id}
           nombre={`Imagen ${i + 1}`}
           posicion={x.posicion}
+          formato={x.formato}
+          formatos={FORMATOS.map((f) => ({ id: f.id, nombre: f.nombre, ayuda: f.ayuda }))}
           posiciones={POSICIONES.map((p) => ({ id: p.id, nombre: p.nombre, ayuda: p.ayuda }))}
           imagen={x.imagen}
           enlace={x.enlace}

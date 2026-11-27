@@ -35,6 +35,8 @@ export function FormEspacio(p: {
   id: string;
   nombre: string;
   posicion: string;
+  formato: string;
+  formatos: { id: string; nombre: string; ayuda: string }[];
   posiciones: { id: string; nombre: string; ayuda: string }[];
   imagen: string | null;
   enlace: string;
@@ -46,6 +48,8 @@ export function FormEspacio(p: {
   const [preparando, setPreparando] = useState(false);
   const [quitar, setQuitar] = useState(false);
   const [pos, setPos] = useState(p.posicion);
+  const [fmt, setFmt] = useState(p.formato);
+  const ayudaFmt = p.formatos.find((x) => x.id === fmt)?.ayuda;
   const ayudaPos = p.posiciones.find((x) => x.id === pos)?.ayuda;
   const entrada = useRef<HTMLInputElement>(null);
   const ancho = useRef<HTMLInputElement>(null);
@@ -81,7 +85,7 @@ export function FormEspacio(p: {
         <h2>{p.nombre}</h2>
       </div>
 
-      <div className="vista-previa">
+      <div className={`vista-previa formato-${fmt}`}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         {vista && !quitar ? <img src={vista} alt="" /> : <span>Sin imagen</span>}
       </div>
@@ -115,6 +119,17 @@ export function FormEspacio(p: {
           ))}
         </select>
         {ayudaPos && <span className="ayuda">{ayudaPos}</span>}
+      </div>
+      <div className="campo">
+        <label htmlFor={`fmt-${p.id}`}>Formato</label>
+        <select id={`fmt-${p.id}`} name="formato" value={fmt} onChange={(e) => setFmt(e.target.value)}>
+          {p.formatos.map((x) => (
+            <option key={x.id} value={x.id}>
+              {x.nombre}
+            </option>
+          ))}
+        </select>
+        {ayudaFmt && <span className="ayuda">{ayudaFmt}</span>}
       </div>
       <div className="campo">
         <label htmlFor={`enlace-${p.id}`}>Enlace al tocar la imagen</label>

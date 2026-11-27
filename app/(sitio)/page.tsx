@@ -64,6 +64,8 @@ export default async function Inicio() {
             </div>
           </div>
 
+          <Espacios lista={enPosicion(espacios, 'sobre-resultado')} enHero="sobre" primero />
+
           {principal && (
             <div className="destacados">
               {principal.modo === 'loterias' ? (
@@ -86,6 +88,8 @@ export default async function Inicio() {
               )}
             </div>
           )}
+
+          <Espacios lista={enPosicion(espacios, 'bajo-resultado')} enHero="bajo" primero />
 
           {proximo && proximo.ms && (
             <div className="proximo-caja">
